@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="AHV Chat - A simple and powerful messaging app">
+    <meta name="keywords" content="chat app, messaging, AHV Chat, social app">
+    <title>AHV Chat</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            color: #fff;
+            text-align: center;
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+        }
+
+        /* Background illusion animation */
+        .background {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle, rgba(0,0,50,0.8) 10%, rgba(0,0,0,1) 90%);
+            overflow: hidden;
+            z-index: -1;
+        }
+
+        .tech-lines {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+        }
+
+        .tech-line {
+            position: absolute;
+            width: 2px;
+            height: 100px;
+            background: rgba(0, 200, 255, 0.6);
+            animation: moveLines 5s infinite linear;
+        }
+
+        @keyframes moveLines {
+            from { transform: translateY(-100px); opacity: 0; }
+            to { transform: translateY(100vh); opacity: 1; }
+        }
+
+        .tech-circle {
+            position: absolute;
+            width: 40px;
+            height: 40px;
+            border: 2px solid rgba(0, 200, 255, 0.8);
+            border-radius: 50%;
+            animation: pulse 6s infinite ease-in-out;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(0.8); opacity: 0.5; }
+            50% { transform: scale(1.2); opacity: 1; }
+            100% { transform: scale(0.8); opacity: 0.5; }
+        }
+
+        header {
+            background: rgba(51, 55, 97, 0.8);
+            padding: 15px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            left: 0;
+            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        .hero-section {
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 20px;
+        }
+
+        footer {
+            padding: 15px;
+            background: rgba(0, 0, 30, 0.9);
+            color: white;
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+        }
+    </style>
+</head>
+<body>
+
+<div class="background"></div>
+<div class="tech-lines">
+    <div class="tech-line" style="top: 10%; left: 20%; animation-duration: 4s;"></div>
+    <div class="tech-line" style="top: 30%; left: 50%; animation-duration: 6s;"></div>
+    <div class="tech-line" style="top: 60%; left: 80%; animation-duration: 5s;"></div>
+    <div class="tech-circle" style="top: 40%; left: 25%; animation-duration: 7s;"></div>
+    <div class="tech-circle" style="top: 70%; left: 60%; animation-duration: 8s;"></div>
+</div>
+
+<header>
+    <div class="logo"><span class="ahv">AHV</span> Chat</div>
+    <nav>
+        <a href="features.html">Features</a>
+        <a href="testimonials.html">Testimonials</a>
+        <a href="contact.html">Contact</a>
+    </nav>
+    <div>
+        <a href="signup.html" class="cta-button">Get Started</a>
+        <a href="login.html" class="cta-button">Login</a>
+    </div>
+</header>
+
+<section class="hero-section">
+    <div>
+        <h1>Welcome to AHV Chat</h1>
+        <p>Your go-to messaging app for seamless communication</p>
+        <a href="signup.html" class="cta-button-hero">Sign Up Now</a>
+    </div>
+</section>
+
+<footer>
+    <p>&copy; 2025 AHV Chat. All Rights Reserved.</p>
+</footer>
+
+</body>
+</html>

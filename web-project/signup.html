@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign Up - AHV Chat</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(to right, #353537, rgb(0, 0, 0));
+            color: #fff;
+            text-align: center;
+            margin: 0;
+            padding: 0;
+        }
+
+        header {
+            background: rgba(3, 3, 44, 0.8);
+            padding: 15px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            left: 0;
+            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: bold;
+            color: #dcd8d8;
+        }
+
+        nav a {
+            color: #fbf9f9;
+            text-decoration: none;
+            margin: 0 15px;
+            font-weight: bold;
+            transition: color 0.3s ease-in-out;
+            font-size: larger;
+        }
+
+        nav a:hover {
+            color: #ff5733;
+        }
+
+        .auth-buttons .cta-button {
+            background: #2c6fcd;
+            padding: 9px 30px;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            font-weight: bold;
+            transition: background 0.3s;
+        }
+
+        .auth-buttons .cta-button:hover {
+            background: #ff5733;
+        }
+
+        .content {
+            margin-top: 100px;
+            display: flex;
+            justify-content: center;
+        }
+
+        .form-container {
+            background: rgb(151, 154, 158);
+            padding: 25px;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            width: 280px;
+            color: #0e0e0e;
+        }
+
+        h2 {
+            margin-bottom: 24px;
+            color: #222;
+        }
+
+        form input {
+            width: 80%;
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid rgba(159, 157, 157, 0.07);
+            border-radius: 3px;
+        }
+
+        form button {
+            width: 65%;
+            padding: 9px;
+            background: #5b7cb3;
+            color: #fbf9f9;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            margin-top: 10px;
+            transition: background 0.5s ease-in-out;
+        }
+
+        form button:hover {
+            background: #c31010;
+        }
+
+        .error-message {
+            display: none;
+            color: red;
+            font-size: 14px;
+            margin-top: 5px;
+        }
+
+        footer {
+            margin-top: 20px;
+            padding: 15px;
+            background: rgba(0, 0, 50, 0.8);
+            color: white;
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <div class="logo">AHV Chat</div>
+    <nav>
+        <a href="features.html">Features</a>
+        <a href="testimonials.html">Testimonials</a>
+        <a href="contact.html">Contact</a>
+    </nav>
+    <div class="auth-buttons">
+        <a href="signup.html" class="cta-button">Get Started</a>
+        <a href="login.html" class="cta-button">Login</a>
+    </div>
+</header>
+
+<div class="content">
+    <div class="form-container">
+        <h2>Sign Up for AHV Chat</h2>
+        <form id="signupForm" action="signup-success.html" method="GET">
+            <input type="text" name="fullName" placeholder="Full Name" required>
+            <input type="tel" name="phoneNumber" placeholder="Phone Number" required>
+            <input type="number" name="age" placeholder="Age" required>
+            <input type="text" name="username" placeholder="Username" required>
+            <input type="password" id="password" name="password" placeholder="Password" required>
+            <input type="password" id="confirmPassword" name="confirmPassword" placeholder="Confirm Password" required>
+            <div id="passwordError" class="error-message">Passwords do not match.</div>
+            <button type="submit">Submit</button>
+        </form>
+        <p><a href="index.html">Go Back</a></p>
+    </div>
+</div>
+
+<!-- Footer Section -->
+<footer>
+    <p>&copy; 2025 AHV Chat. All Rights Reserved.</p>
+</footer>
+
+<script>
+    document.getElementById('signupForm').addEventListener('submit', function(event) {
+        const password = document.getElementById('password').value;
+        const confirmPassword = document.getElementById('confirmPassword').value;
+        const errorMessage = document.getElementById('passwordError');
+
+        if (password !== confirmPassword) {
+            errorMessage.style.display = 'block'; 
+            event.preventDefault(); 
+        } else {
+            errorMessage.style.display = 'none'; 
+        }
+    });
+</script>
+
+</body>
+</html> 

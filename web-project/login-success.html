@@ -1,0 +1,521 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>AHV Chat</title>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+        body {
+            background: linear-gradient(to right, #007bff, #fbf9f9);
+            color: black;
+            background-image: url('https://www.transparenttextures.com/patterns/diagonal-stripes.png');
+            background-size: 30px 30px;
+        }
+        .container {
+            width: 65%;
+            max-width: 1200px;
+            align:center;
+            margin-left: 25px;
+        }
+        .navbar {
+            background: rgba(0, 0, 50, 0.8);
+            color: white;
+            padding: 14px 0;
+            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+        }
+        .nav-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+        }
+        .logo {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: white;
+            text-decoration: none;
+        }
+        .nav-actions {
+            display: flex;
+            align-items: top right bottom left;
+            gap: 10px;
+        }
+        .icon-button {
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 18px;
+            color: white;
+            transition: color 0.3s ease-in-out;
+        }
+        .icon-button:hover {
+            color: #ff5733;
+        }
+        .dropdown {
+            position: relative;
+        }
+        .dropdown-menu {
+            position: absolute;
+            right: 0;
+            background: white;
+            color: black;
+            border-radius: 5px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            display: none;
+            flex-direction: column;
+            width: 150px;
+        }
+        .dropdown-item {
+            padding: 10px;
+            display: flex;
+            align-items: center;
+            text-decoration: none;
+            color: black;
+            transition: background 0.3s ease-in-out;
+        }
+        .dropdown-item:hover {
+            background: #ddd;
+        }
+        .text-red {
+            color: red;
+        }
+        .main-content {
+            display: flex;
+            margin-top: 20px;
+        }
+        .sidebar {
+            width: 200px;
+            background: rgba(255, 255, 255, 0.9);
+            padding: 15px;
+            border-radius: 10px;
+            box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
+            color: black;
+        }
+        .sidebar-item {
+            display: flex;
+            align-items: center;
+            padding: 10px;
+            text-decoration: none;
+            color: black;
+            transition: background 0.3s ease-in-out;
+        }
+        .sidebar-item:hover {
+            background: #007bff;
+            color: white;
+        }
+        .main {
+            flex: 1;
+            padding: 20px;
+        }
+        .post-form {
+            display: flex;
+            gap: 10px;
+            background: rgba(255, 255, 255, 0.9);
+            padding: 10px;
+            border-radius: 5px;
+            color: black;
+            margin-bottom: 20px;
+        }
+        .input {
+            flex: 1;
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        .button {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 8px 12px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background 0.3s ease-in-out;
+        }
+        .button:hover {
+            background: #ff5733;
+        }
+        .post {
+            background: rgba(255, 255, 255, 0.9);
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 5px;
+            color: black;
+        }
+        .post-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        .post-user {
+            font-weight: bold;
+        }
+        .post-image {
+            width: 100%;
+            max-height: 500px;
+            object-fit: contain;
+            border-radius: 5px;
+            margin-top: 10px;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+        }
+        .post-image:hover {
+            transform: scale(1.02);
+        }
+        .post-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+        }
+        .like-btn {
+            cursor: pointer;
+        }
+        .font-bold {
+            font-weight: bold;
+        }
+        .stars span {
+            font-size: 20px;
+            color: #ccc;
+            cursor: pointer;
+        }
+        .stars span.active {
+            color: gold;
+        }
+        .comment {
+            background: #eee;
+            color: black;
+            padding: 6px 10px;
+            margin-top: 6px;
+            border-radius: 5px;
+        }
+        .photo-feed-title {
+            margin: 20px 0 10px 0;
+            font-size: 1.5rem;
+            color: #333;
+            border-bottom: 2px solid #007bff;
+            padding-bottom: 5px;
+        }
+    </style>
+</head>
+<body>
+<nav class="navbar">
+    <div class="container">
+        <div class="nav-content">
+            <a href="/" class="logo">AHV Chat</a>
+            <div class="nav-actions">
+                <a href="chat.html" class="icon-button">
+                    <i data-lucide="message-circle"></i>
+                </a>
+                <div class="dropdown">
+                    <button class="icon-button" id="userMenuBtn">
+                        <i data-lucide="user"></i>
+                    </button>
+                    <div class="dropdown-menu" id="userMenu">
+                        <a href="profile.html" class="dropdown-item">
+                            <i data-lucide="user"></i> Profile
+                        </a>
+                        <a href="settings.html" class="dropdown-item">
+                            <i data-lucide="settings"></i> Settings
+                        </a>
+                        <a href="photo-feed.html" class="dropdown-item">
+                            <i data-lucide="camera"></i> Photo Feed
+                        </a>
+                        <button class="dropdown-item text-red" id="logoutBtn">
+                            <i data-lucide="log-out"></i> Logout
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</nav>
+
+<div class="container main-content">
+    <aside class="sidebar">
+        <nav>
+            <a href="index.html" class="sidebar-item active"><i data-lucide="home"></i> <span>Home</span></a>
+            <a href="friends.html" class="sidebar-item"><i data-lucide="users"></i> <span>Friends</span></a>
+            <a href="photos.html" class="sidebar-item"><i data-lucide="image"></i> <span>Photos</span></a>
+            <a href="rating.html" class="sidebar-item"><i data-lucide="star"></i><span>Ratings</span></a>
+            <a href="photo-feed.html" class="sidebar-item"><i data-lucide="camera"></i><span>Photo Feed</span></a>
+        </nav>
+    </aside>
+
+    <main class="main">
+        <div class="post-form">
+            <input type="file" id="newPostImage" accept="image/*" class="input">
+            <input type="text" id="newPostContent" placeholder="Share your thoughts..." class="input">
+            <button class="button" id="postButton">
+                <i data-lucide="image"></i> Share
+            </button>
+        </div>
+
+        <div class="posts" id="postContainer">
+            <!-- Regular posts will appear here -->
+        </div>
+
+        <h3 class="photo-feed-title">Your Photo Feed</h3>
+        <div class="posts" id="photoFeedContainer">
+            <!-- Photos from the Photo Feed will appear here -->
+        </div>
+    </main>
+</div>
+
+<script>
+    lucide.createIcons();
+
+    document.addEventListener("DOMContentLoaded", () => {
+        // Navigation and dropdown functionality
+        const userMenuBtn = document.getElementById("userMenuBtn");
+        const userMenu = document.getElementById("userMenu");
+        const logoutBtn = document.getElementById("logoutBtn");
+
+        userMenuBtn.addEventListener("click", () => {
+            userMenu.style.display = userMenu.style.display === "flex" ? "none" : "flex";
+        });
+
+        document.addEventListener("click", (e) => {
+            if (!userMenuBtn.contains(e.target) && !userMenu.contains(e.target)) {
+                userMenu.style.display = "none";
+            }
+        });
+
+        logoutBtn.addEventListener("click", () => {
+            window.location.href = "/index.html";
+        });
+
+        // Load and display photo feed posts
+        function loadPhotoFeed() {
+            const photoFeedContainer = document.getElementById("photoFeedContainer");
+            const photos = JSON.parse(localStorage.getItem("photoFeed")) || [];
+
+            photoFeedContainer.innerHTML = "";
+
+            if (photos.length === 0) {
+                photoFeedContainer.innerHTML = '<div class="post">No photos in your feed yet. Upload some in the Photo Feed!</div>';
+                return;
+            }
+
+            photos.forEach((photo, index) => {
+                const avgRating = photo.ratings.length > 0
+                    ? (photo.ratings.reduce((a, b) => a + b, 0) / photo.ratings.length).toFixed(1)
+                    : 0;
+
+                const photoPost = document.createElement("div");
+                photoPost.classList.add("post");
+
+                photoPost.innerHTML = `
+                    <div class="post-header">
+                        <div class="post-user">Photo Feed #${index + 1}</div>
+                        <button class="button delete-photo" data-index="${index}">
+                            <i data-lucide="trash-2"></i> Delete
+                        </button>
+                    </div>
+                    <img src="${photo.image}" class="post-image" alt="Photo Feed Image ${index + 1}">
+                    <div class="post-actions">
+                        <button class="icon-button like-btn"><i data-lucide="heart"></i> <span class="likes-count">0</span></button>
+                        <button class="icon-button"><i data-lucide="message-circle"></i> ${photo.comments.length}</button>
+                    </div>
+                    <div class="rating-section">
+                        <div class="stars" data-index="${index}">
+                            <span class="star" data-rating="1">★</span>
+                            <span class="star" data-rating="2">★</span>
+                            <span class="star" data-rating="3">★</span>
+                            <span class="star" data-rating="4">★</span>
+                            <span class="star" data-rating="5">★</span>
+                            <span style="margin-left: 10px; font-size: 14px;">Avg: ${avgRating}</span>
+                        </div>
+                        <div class="comments-list">
+                            ${photo.comments.map(comment => `<div class="comment">${comment}</div>`).join('')}
+                        </div>
+                        <div class="comment-box" style="margin-top: 10px;">
+                            <input type="text" class="input comment-input" data-index="${index}" placeholder="Write a comment...">
+                            <button class="button post-comment-btn" data-index="${index}">Post Comment</button>
+                        </div>
+                    </div>
+                `;
+
+                photoFeedContainer.appendChild(photoPost);
+            });
+
+            // Initialize stars with active ratings
+            photos.forEach((photo, index) => {
+                const stars = document.querySelectorAll(`.stars[data-index="${index}"] .star`);
+                if (photo.ratings.length > 0) {
+                    const avgRating = photo.ratings.reduce((a, b) => a + b, 0) / photo.ratings.length;
+                    const roundedAvg = Math.round(avgRating);
+                    stars.forEach((star, i) => {
+                        if (i < roundedAvg) {
+                            star.classList.add("active");
+                        }
+                    });
+                }
+            });
+
+            // Initialize icons for new posts
+            lucide.createIcons();
+
+            // Add event listeners for photo feed interactions
+            setupPhotoFeedInteractions();
+        }
+
+        // Setup event listeners for photo feed posts
+        function setupPhotoFeedInteractions() {
+            // Rating stars
+            document.querySelectorAll('.stars').forEach(starGroup => {
+                const stars = starGroup.querySelectorAll('.star');
+                const photoIndex = starGroup.dataset.index;
+
+                stars.forEach(star => {
+                    star.addEventListener('click', () => {
+                        const rating = parseInt(star.dataset.rating);
+
+                        // Update UI
+                        stars.forEach(s => s.classList.remove('active'));
+                        for (let i = 0; i < rating; i++) {
+                            stars[i].classList.add('active');
+                        }
+
+                        // Update localStorage
+                        const photos = JSON.parse(localStorage.getItem('photoFeed')) || [];
+                        if (photos[photoIndex]) {
+                            photos[photoIndex].ratings.push(rating);
+                            localStorage.setItem('photoFeed', JSON.stringify(photos));
+                            loadPhotoFeed(); // Refresh to show updated average
+                        }
+                    });
+                });
+            });
+
+            // Comment posting
+            document.querySelectorAll('.post-comment-btn').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const photoIndex = btn.dataset.index;
+                    const input = document.querySelector(`.comment-input[data-index="${photoIndex}"]`);
+                    const commentText = input.value.trim();
+
+                    if (commentText) {
+                        const photos = JSON.parse(localStorage.getItem('photoFeed')) || [];
+                        if (photos[photoIndex]) {
+                            photos[photoIndex].comments.push(commentText);
+                            localStorage.setItem('photoFeed', JSON.stringify(photos));
+                            loadPhotoFeed(); // Refresh to show new comment
+                        }
+                    }
+                });
+            });
+
+            // Photo deletion
+            document.querySelectorAll('.delete-photo').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const photoIndex = btn.dataset.index;
+                    if (confirm('Are you sure you want to delete this photo?')) {
+                        const photos = JSON.parse(localStorage.getItem('photoFeed')) || [];
+                        photos.splice(photoIndex, 1);
+                        localStorage.setItem('photoFeed', JSON.stringify(photos));
+                        loadPhotoFeed(); // Refresh after deletion
+                    }
+                });
+            });
+        }
+
+        // Regular post functionality
+        const postButton = document.getElementById("postButton");
+        const newPostContent = document.getElementById("newPostContent");
+        const postContainer = document.getElementById("postContainer");
+
+        postButton.addEventListener("click", () => {
+            const postText = newPostContent.value.trim();
+            const postImage = document.getElementById("newPostImage").files[0];
+
+            if (postText || postImage) {
+                const newPost = document.createElement("div");
+                newPost.classList.add("post");
+
+                let imageHTML = '';
+                if (postImage) {
+                    const imageURL = URL.createObjectURL(postImage);
+                    imageHTML = `<img src="${imageURL}" class="post-image" alt="Uploaded image">`;
+                }
+
+                newPost.innerHTML = `
+                    <div class="post-header">
+                        <div class="post-user">You</div>
+                        <button class="button">Follow</button>
+                    </div>
+                    ${imageHTML}
+                    <div class="post-actions">
+                        <button class="icon-button like-btn"><i data-lucide="heart"></i> <span class="likes-count">0</span></button>
+                        <button class="icon-button"><i data-lucide="message-circle"></i> 0</button>
+                    </div>
+                    <p class="post-description"><span class="font-bold">You</span> ${postText}</p>
+                    <div class="rating-section">
+                        <div class="stars">
+                            <span class="star" data-rating="1">★</span>
+                            <span class="star" data-rating="2">★</span>
+                            <span class="star" data-rating="3">★</span>
+                            <span class="star" data-rating="4">★</span>
+                            <span class="star" data-rating="5">★</span>
+                        </div>
+                        <input type="text" class="input comment-input" placeholder="Write a comment...">
+                        <button class="button post-comment-btn">Post Comment</button>
+                        <div class="comments-list"></div>
+                    </div>
+                `;
+
+                postContainer.prepend(newPost);
+                lucide.createIcons();
+
+                // Likes
+                const likeBtn = newPost.querySelector(".like-btn");
+                const likeCount = likeBtn.querySelector(".likes-count");
+                likeBtn.addEventListener("click", () => {
+                    likeCount.innerText = parseInt(likeCount.innerText) + 1;
+                });
+
+                // Ratings
+                const stars = newPost.querySelectorAll(".star");
+                stars.forEach(star => {
+                    star.addEventListener("click", () => {
+                        const rating = parseInt(star.dataset.rating);
+                        stars.forEach(s => s.classList.remove("active"));
+                        for (let i = 0; i < rating; i++) {
+                            stars[i].classList.add("active");
+                        }
+                    });
+                });
+
+                // Comments
+                const commentBtn = newPost.querySelector(".post-comment-btn");
+                const commentInput = newPost.querySelector(".comment-input");
+                const commentList = newPost.querySelector(".comments-list");
+
+                commentBtn.addEventListener("click", () => {
+                    const commentText = commentInput.value.trim();
+                    if (commentText) {
+                        const commentBox = document.createElement("div");
+                        commentBox.className = "comment";
+                        commentBox.textContent = commentText;
+                        commentList.appendChild(commentBox);
+                        commentInput.value = "";
+                    }
+                });
+
+                // Reset inputs
+                newPostContent.value = '';
+                document.getElementById("newPostImage").value = '';
+            }
+        });
+
+        // Initial load of photo feed
+        loadPhotoFeed();
+    });
+</script>
+</body>
+</html>

@@ -1,0 +1,891 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>AI Image Improvement Assistant</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Poppins', sans-serif;
+      background: #121212 url('https://www.transparenttextures.com/patterns/dark-mosaic.png');
+      display: flex;
+      height: 100vh;
+      flex-direction: column;
+      color: #e0e0e0;
+    }
+
+    .chat-header {
+      background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+      color: white;
+      padding: 12px 15px;
+      font-size: 1.2rem;
+      text-align: center;
+      font-weight: 600;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.3);
+      position: relative;
+      z-index: 10;
+    }
+
+    .chat-box {
+      flex: 1;
+      overflow-y: auto;
+      padding: 20px;
+      background: rgba(30, 30, 30, 0.8);
+    }
+
+    .message {
+      margin-bottom: 15px;
+      max-width: 60%;
+      padding: 10px 15px;
+      border-radius: 12px;
+      clear: both;
+      word-wrap: break-word;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+    }
+
+    .sent {
+      background-color: #4a154b;
+      float: right;
+      text-align: right;
+      color: white;
+      border-bottom-right-radius: 4px;
+    }
+
+    .received {
+      background-color: #2d2d2d;
+      float: left;
+      text-align: left;
+      border-bottom-left-radius: 4px;
+    }
+
+    .chat-input {
+      display: flex;
+      padding: 8px;
+      background: #1e1e1e;
+      border-top: 1px solid #333;
+      align-items: center;
+    }
+
+    .chat-input input[type="text"] {
+      flex: 1;
+      padding: 8px 15px;
+      border: 1px solid #444;
+      border-radius: 20px;
+      background: #2a2a2a;
+      color: #e0e0e0;
+      font-family: 'Poppins', sans-serif;
+      font-size: 0.9rem;
+    }
+
+    .chat-input input[type="text"]:focus {
+      outline: none;
+      border-color: #6a1b6a;
+    }
+
+    .chat-input button {
+      background: linear-gradient(135deg, #6a1b6a 0%, #4a154b 100%);
+      color: white;
+      border: none;
+      padding: 8px 18px;
+      margin-left: 8px;
+      border-radius: 20px;
+      cursor: pointer;
+      font-family: 'Poppins', sans-serif;
+      font-weight: 500;
+      font-size: 0.9rem;
+      transition: all 0.2s ease;
+    }
+
+    .chat-input button:hover {
+      background: linear-gradient(135deg, #7a2b7a 0%, #5a255a 100%);
+      transform: translateY(-1px);
+    }
+
+    .chat-input input[type="file"] {
+      margin-left: 8px;
+      width: 40px;
+      opacity: 0;
+      position: absolute;
+      cursor: pointer;
+    }
+
+    .file-input-label {
+      background: #333;
+      color: #aaa;
+      padding: 8px;
+      border-radius: 50%;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 20px;
+      height: 20px;
+      font-size: 1.1rem;
+      transition: all 0.2s ease;
+    }
+
+    .file-input-label:hover {
+      background: #444;
+      color: #ccc;
+    }
+
+    .smart-replies {
+      display: flex;
+      gap: 8px;
+      padding: 8px;
+      background: #1e1e1e;
+      border-top: 1px solid #333;
+      overflow-x: auto;
+    }
+
+    .smart-replies span {
+      background: #333;
+      border-radius: 20px;
+      padding: 6px 12px;
+      cursor: pointer;
+      white-space: nowrap;
+      font-size: 0.8rem;
+      color: #ccc;
+      transition: all 0.2s ease;
+    }
+
+    .smart-replies span:hover {
+      background: #444;
+      color: white;
+    }
+
+    img.chat-image {
+      max-width: 100%;
+      max-height: 300px;
+      border-radius: 8px;
+      object-fit: contain;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.3);
+    }
+
+    .analysis-container {
+      margin-top: 10px;
+      padding: 12px;
+      background: #252525;
+      border-radius: 8px;
+      border-left: 3px solid #6a1b6a;
+    }
+
+    .analysis-title {
+      font-weight: 600;
+      margin-bottom: 8px;
+      color: #d0d0d0;
+    }
+
+    .suggestion-list {
+      margin-top: 5px;
+      padding-left: 20px;
+    }
+
+    .suggestion-list li {
+      margin-bottom: 5px;
+      color: #b0b0b0;
+      font-size: 0.9rem;
+    }
+
+    .before-after {
+      display: flex;
+      gap: 10px;
+      margin-top: 10px;
+      flex-wrap: wrap;
+    }
+
+    .before-after img {
+      flex: 1;
+      min-width: 200px;
+      border: 1px solid #444;
+      background: #1e1e1e;
+      padding: 5px;
+    }
+
+    .improvement-btn {
+      background: linear-gradient(135deg, #6a1b6a 0%, #4a154b 100%);
+      color: white;
+      border: none;
+      padding: 8px 15px;
+      margin-top: 10px;
+      border-radius: 5px;
+      cursor: pointer;
+      font-family: 'Poppins', sans-serif;
+      font-size: 0.85rem;
+      transition: all 0.2s ease;
+    }
+
+    .improvement-btn:hover {
+      background: linear-gradient(135deg, #7a2b7a 0%, #5a255a 100%);
+      transform: translateY(-1px);
+    }
+
+    .loading {
+      display: inline-block;
+      width: 18px;
+      height: 18px;
+      border: 3px solid rgba(255,255,255,.1);
+      border-radius: 50%;
+      border-top-color: #b06ab3;
+      animation: spin 1s ease-in-out infinite;
+      vertical-align: middle;
+      margin-right: 8px;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    .bg-options {
+      display: flex;
+      gap: 10px;
+      margin-top: 10px;
+      flex-wrap: wrap;
+    }
+
+    .bg-option {
+      width: 50px;
+      height: 50px;
+      border-radius: 5px;
+      cursor: pointer;
+      border: 2px solid transparent;
+      transition: all 0.2s ease;
+    }
+
+    .bg-option:hover {
+      border-color: #6a1b6a;
+      transform: scale(1.05);
+    }
+
+    .bg-option.selected {
+      border-color: #6a1b6a;
+      box-shadow: 0 0 8px rgba(106, 26, 106, 0.6);
+      transform: scale(1.05);
+    }
+
+    .bg-preview {
+      margin-top: 15px;
+      padding: 12px;
+      background: #252525;
+      border-radius: 8px;
+    }
+
+    .bg-preview-title {
+      font-weight: 600;
+      margin-bottom: 8px;
+      color: #d0d0d0;
+    }
+
+    .action-buttons {
+      display: flex;
+      gap: 10px;
+      margin-top: 15px;
+    }
+
+    .action-btn {
+      padding: 8px 15px;
+      border-radius: 5px;
+      border: none;
+      cursor: pointer;
+      font-weight: 500;
+      font-family: 'Poppins', sans-serif;
+      font-size: 0.85rem;
+      transition: all 0.2s ease;
+    }
+
+    .action-btn:hover {
+      transform: translateY(-1px);
+    }
+
+    .primary-btn {
+      background: linear-gradient(135deg, #6a1b6a 0%, #4a154b 100%);
+      color: white;
+    }
+
+    .primary-btn:hover {
+      background: linear-gradient(135deg, #7a2b7a 0%, #5a255a 100%);
+    }
+
+    .secondary-btn {
+      background: #333;
+      color: #ccc;
+    }
+
+    .secondary-btn:hover {
+      background: #444;
+      color: white;
+    }
+
+    /* Scrollbar styling */
+    ::-webkit-scrollbar {
+      width: 8px;
+      height: 8px;
+    }
+
+    ::-webkit-scrollbar-track {
+      background: #252525;
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: #4a154b;
+      border-radius: 4px;
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+      background: #6a1b6a;
+    }
+
+    /* File input styling */
+    .file-input-container {
+      position: relative;
+      margin-left: 8px;
+    }
+
+    /* Responsive adjustments */
+    @media (max-width: 600px) {
+      .message {
+        max-width: 80%;
+        padding: 8px 12px;
+      }
+
+      .chat-input {
+        padding: 6px;
+      }
+
+      .chat-input input[type="text"] {
+        padding: 6px 12px;
+      }
+
+      .chat-input button {
+        padding: 6px 12px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+<div class="chat-header">AI Image Improvement Assistant</div>
+
+<div class="chat-box" id="chatBox"></div>
+
+<div class="smart-replies" id="smartReplies">
+  <!-- Smart replies will be dynamically generated here -->
+</div>
+
+<div class="chat-input">
+  <input type="text" id="messageInput" placeholder="Type a message or upload an image..." onkeypress="handleKeyPress(event)">
+  <div class="file-input-container">
+    <label for="imageInput" class="file-input-label">+</label>
+    <input type="file" id="imageInput" accept="image/*">
+  </div>
+  <button onclick="sendMessage()">Send</button>
+</div>
+
+<script>
+  const chatBox = document.getElementById('chatBox');
+  const messageInput = document.getElementById('messageInput');
+  const imageInput = document.getElementById('imageInput');
+  const smartReplies = document.getElementById('smartReplies');
+
+  // Default smart replies
+  const defaultReplies = [
+    "Can you improve my image?",
+    "What's wrong with this photo?",
+    "How can I make this better?",
+    "What filters would you suggest?"
+  ];
+
+  // Background color options
+  const bgColors = [
+    { name: "White", value: "#ffffff" },
+    { name: "Black", value: "#000000" },
+    { name: "Light Gray", value: "#f5f5f5" },
+    { name: "Dark Gray", value: "#333333" },
+    { name: "Blur", value: "blur" },
+    { name: "Gradient", value: "gradient" },
+    { name: "Nature", value: "nature" },
+    { name: "Studio", value: "studio" }
+  ];
+
+  // Initialize with default replies
+  updateSmartReplies(defaultReplies);
+
+  function handleKeyPress(event) {
+    if (event.key === 'Enter') {
+      sendMessage();
+    }
+  }
+
+  function sendMessage() {
+    const msg = messageInput.value.trim();
+    const file = imageInput.files[0];
+
+    if (msg) {
+      appendMessage('sent', msg);
+      simulateTextReply();
+      messageInput.value = '';
+    }
+
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = function (e) {
+        appendImage('sent', e.target.result);
+        analyzeAndImproveImage(file);
+      };
+      reader.readAsDataURL(file);
+      imageInput.value = '';
+    }
+  }
+
+  function appendMessage(type, text) {
+    const msgDiv = document.createElement('div');
+    msgDiv.className = `message ${type}`;
+    msgDiv.innerText = text;
+    chatBox.appendChild(msgDiv);
+    chatBox.scrollTop = chatBox.scrollHeight;
+  }
+
+  function appendImage(type, imgSrc) {
+    const msgDiv = document.createElement('div');
+    msgDiv.className = `message ${type}`;
+    const img = document.createElement('img');
+    img.src = imgSrc;
+    img.className = 'chat-image';
+    msgDiv.appendChild(img);
+    chatBox.appendChild(msgDiv);
+    chatBox.scrollTop = chatBox.scrollHeight;
+    return msgDiv;
+  }
+
+  function appendLoading() {
+    const msgDiv = document.createElement('div');
+    msgDiv.className = 'message received';
+    msgDiv.innerHTML = '<div class="loading"></div> Analyzing your image...';
+    chatBox.appendChild(msgDiv);
+    chatBox.scrollTop = chatBox.scrollHeight;
+    return msgDiv;
+  }
+
+  function appendAnalysis(imageType, suggestions, originalSrc) {
+    const msgDiv = document.createElement('div');
+    msgDiv.className = 'message received';
+
+    const analysisDiv = document.createElement('div');
+    analysisDiv.className = 'analysis-container';
+
+    const title = document.createElement('div');
+    title.className = 'analysis-title';
+    title.textContent = `📷 ${getImageTypeDescription(imageType)} Analysis:`;
+
+    const suggList = document.createElement('ul');
+    suggList.className = 'suggestion-list';
+
+    suggestions.forEach(sugg => {
+      const li = document.createElement('li');
+      li.textContent = sugg;
+      suggList.appendChild(li);
+    });
+
+    analysisDiv.appendChild(title);
+    analysisDiv.appendChild(suggList);
+
+    // Add improvement button
+    const improveBtn = document.createElement('button');
+    improveBtn.className = 'improvement-btn';
+    improveBtn.textContent = 'Show Improved Version';
+    improveBtn.onclick = () => showImprovedVersion(originalSrc, imageType);
+
+    analysisDiv.appendChild(improveBtn);
+    msgDiv.appendChild(analysisDiv);
+
+    chatBox.appendChild(msgDiv);
+    chatBox.scrollTop = chatBox.scrollHeight;
+  }
+
+  function showImprovedVersion(originalSrc, imageType) {
+    const loadingMsg = appendLoading();
+
+    setTimeout(() => {
+      // Remove loading message
+      chatBox.removeChild(loadingMsg);
+
+      const msgDiv = document.createElement('div');
+      msgDiv.className = 'message received';
+
+      const title = document.createElement('div');
+      title.className = 'analysis-title';
+      title.textContent = '✨ Improved Version Suggestions:';
+
+      const beforeAfter = document.createElement('div');
+      beforeAfter.className = 'before-after';
+
+      // Original image
+      const originalImg = document.createElement('img');
+      originalImg.src = originalSrc;
+      originalImg.className = 'chat-image';
+      originalImg.title = 'Original';
+
+      // Create canvas for improved image
+      const canvas = document.createElement('canvas');
+      const ctx = canvas.getContext('2d');
+      const img = new Image();
+      img.src = originalSrc;
+
+      img.onload = function() {
+        canvas.width = img.width;
+        canvas.height = img.height;
+        ctx.drawImage(img, 0, 0);
+
+        // Apply simulated improvements based on image type
+        applyCanvasImprovements(ctx, imageType, img.width, img.height);
+
+        // Create improved image element
+        const improvedImg = document.createElement('img');
+        improvedImg.className = 'chat-image';
+        improvedImg.title = 'Suggested Improvements';
+        improvedImg.src = canvas.toDataURL('image/jpeg', 0.9);
+
+        beforeAfter.appendChild(originalImg);
+        beforeAfter.appendChild(improvedImg);
+
+        const tips = document.createElement('div');
+        tips.innerHTML = `<p><strong>Improvements made:</strong> ${getImprovementTips(imageType)}</p>`;
+
+        // Add background options
+        const bgPreview = document.createElement('div');
+        bgPreview.className = 'bg-preview';
+
+        const bgTitle = document.createElement('div');
+        bgTitle.className = 'bg-preview-title';
+        bgTitle.textContent = 'Try different backgrounds:';
+
+        const bgOptions = document.createElement('div');
+        bgOptions.className = 'bg-options';
+
+        bgColors.forEach(color => {
+          const option = document.createElement('div');
+          option.className = 'bg-option';
+          option.title = color.name;
+
+          if (color.value === 'blur' || color.value === 'gradient' ||
+                  color.value === 'nature' || color.value === 'studio') {
+            option.style.background = getSpecialBackground(color.value);
+          } else {
+            option.style.background = color.value;
+          }
+
+          option.onclick = () => {
+            document.querySelectorAll('.bg-option').forEach(el => {
+              el.classList.remove('selected');
+            });
+            option.classList.add('selected');
+            showBackgroundPreview(improvedImg.src, color);
+          };
+
+          bgOptions.appendChild(option);
+        });
+
+        bgPreview.appendChild(bgTitle);
+        bgPreview.appendChild(bgOptions);
+
+        // Action buttons
+        const actionButtons = document.createElement('div');
+        actionButtons.className = 'action-buttons';
+
+        const downloadBtn = document.createElement('button');
+        downloadBtn.className = 'action-btn primary-btn';
+        downloadBtn.textContent = 'Download Improved';
+        downloadBtn.onclick = () => downloadImage(canvas);
+
+        const moreBtn = document.createElement('button');
+        moreBtn.className = 'action-btn secondary-btn';
+        moreBtn.textContent = 'More Suggestions';
+        moreBtn.onclick = () => showAdditionalSuggestions(imageType);
+
+        actionButtons.appendChild(downloadBtn);
+        actionButtons.appendChild(moreBtn);
+
+        msgDiv.appendChild(title);
+        msgDiv.appendChild(beforeAfter);
+        msgDiv.appendChild(tips);
+        msgDiv.appendChild(bgPreview);
+        msgDiv.appendChild(actionButtons);
+
+        chatBox.appendChild(msgDiv);
+        chatBox.scrollTop = chatBox.scrollHeight;
+      };
+    }, 2000);
+  }
+
+  function applyCanvasImprovements(ctx, type, width, height) {
+    // Apply different "improvements" based on image type
+    switch(type) {
+      case 'portrait':
+        // Simulate portrait enhancements
+        ctx.filter = 'contrast(1.1) brightness(1.05) saturate(1.1)';
+        ctx.drawImage(ctx.canvas, 0, 0);
+        ctx.filter = 'none';
+        break;
+      case 'landscape':
+        // Simulate landscape enhancements
+        ctx.filter = 'contrast(1.2) saturate(1.2)';
+        ctx.drawImage(ctx.canvas, 0, 0);
+        ctx.filter = 'none';
+        break;
+      case 'food':
+        // Simulate food enhancements
+        ctx.filter = 'contrast(1.1) brightness(1.1) saturate(1.3)';
+        ctx.drawImage(ctx.canvas, 0, 0);
+        ctx.filter = 'none';
+        break;
+      default:
+        // Default enhancements
+        ctx.filter = 'contrast(1.1) brightness(1.05)';
+        ctx.drawImage(ctx.canvas, 0, 0);
+        ctx.filter = 'none';
+    }
+  }
+
+  function downloadImage(canvas) {
+    // Create a temporary link element
+    const link = document.createElement('a');
+    link.download = 'improved-image.jpg';
+    link.href = canvas.toDataURL('image/jpeg', 0.9);
+
+    // Trigger the download
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+
+    // Show confirmation message
+    const confirmation = document.createElement('div');
+    confirmation.className = 'message received';
+    confirmation.textContent = '✅ Image downloaded successfully!';
+    chatBox.appendChild(confirmation);
+    chatBox.scrollTop = chatBox.scrollHeight;
+  }
+
+  function showBackgroundPreview(imgSrc, bgColor) {
+    // In a real app, this would show a preview of the image with the selected background
+    // For demo, we'll just show a message
+    const existingPreview = document.querySelector('.bg-preview-result');
+    if (existingPreview) {
+      existingPreview.remove();
+    }
+
+    const previewDiv = document.createElement('div');
+    previewDiv.className = 'bg-preview-result';
+    previewDiv.style.marginTop = '10px';
+    previewDiv.style.padding = '10px';
+    previewDiv.style.background = '#252525';
+    previewDiv.style.borderRadius = '5px';
+    previewDiv.style.fontSize = '0.9rem';
+
+    if (bgColor.value === 'blur') {
+      previewDiv.innerHTML = `<p>Background suggestion: <strong>Blurred background</strong> would create depth and focus on the subject.</p>`;
+    } else if (bgColor.value === 'gradient') {
+      previewDiv.innerHTML = `<p>Background suggestion: <strong>Color gradient</strong> would add a modern, stylish look.</p>`;
+    } else if (bgColor.value === 'nature') {
+      previewDiv.innerHTML = `<p>Background suggestion: <strong>Nature scene</strong> would complement your image well.</p>`;
+    } else if (bgColor.value === 'studio') {
+      previewDiv.innerHTML = `<p>Background suggestion: <strong>Studio backdrop</strong> would give a professional look.</p>`;
+    } else {
+      previewDiv.innerHTML = `<p>Background suggestion: <strong>${bgColor.name} background</strong> would provide ${bgColor.name === 'Black' || bgColor.name === 'Dark Gray' ? 'a dramatic contrast' : 'a clean, neutral look'}.</p>`;
+    }
+
+    // Add to the last message
+    const lastMessage = chatBox.lastChild;
+    const bgPreview = lastMessage.querySelector('.bg-preview');
+    bgPreview.appendChild(previewDiv);
+  }
+
+  function getSpecialBackground(type) {
+    // Returns CSS for special background types
+    switch(type) {
+      case 'blur': return 'linear-gradient(45deg, #333 25%, #444 25%, #444 50%, #333 50%, #333 75%, #444 75%)';
+      case 'gradient': return 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)';
+      case 'nature': return 'linear-gradient(135deg, #2c3e50 0%, #4ca1af 100%)';
+      case 'studio': return 'linear-gradient(135deg, #434343 0%, #000000 100%)';
+      default: return '#333';
+    }
+  }
+
+  function showAdditionalSuggestions(imageType) {
+    const suggestions = {
+      portrait: [
+        "Try converting to black and white for a classic look",
+        "Add a soft glow effect for a dreamy portrait",
+        "Consider cropping to a square for social media",
+        "Add a subtle film grain for vintage appeal"
+      ],
+      landscape: [
+        "Try an HDR effect for more dynamic range",
+        "Add a sun flare for dramatic lighting",
+        "Consider a panoramic crop if the composition allows",
+        "Try a matte finish for a moody look"
+      ],
+      food: [
+        "Add a slight tilt-shift effect for focus",
+        "Try a warmer color temperature",
+        "Add subtle vignette to center attention",
+        "Increase micro-contrast for texture"
+      ],
+      pet: [
+        "Add catchlights to brighten the eyes",
+        "Try a painterly effect for artistic look",
+        "Consider a square crop for Instagram",
+        "Add a subtle glow for cute factor"
+      ],
+      default: [
+        "Try a split-toning effect for style",
+        "Add a subtle frame or border",
+        "Consider different aspect ratios",
+        "Experiment with color pop effects"
+      ]
+    };
+
+    const msgDiv = document.createElement('div');
+    msgDiv.className = 'message received';
+
+    const title = document.createElement('div');
+    title.className = 'analysis-title';
+    title.textContent = '💡 Additional Enhancement Ideas:';
+
+    const suggList = document.createElement('ul');
+    suggList.className = 'suggestion-list';
+
+    suggestions[imageType].forEach(sugg => {
+      const li = document.createElement('li');
+      li.textContent = sugg;
+      suggList.appendChild(li);
+    });
+
+    msgDiv.appendChild(title);
+    msgDiv.appendChild(suggList);
+
+    chatBox.appendChild(msgDiv);
+    chatBox.scrollTop = chatBox.scrollHeight;
+  }
+
+  function getImprovementTips(type) {
+    const tips = {
+      portrait: "Enhanced skin tones, improved lighting, subtle sharpening, and background blur applied.",
+      landscape: "Increased contrast, boosted saturation, improved sky details, and horizon alignment.",
+      food: "Enhanced colors, improved lighting, increased sharpness, and added warmth.",
+      pet: "Enhanced fur details, brightened eyes, improved contrast, and removed red-eye.",
+      default: "Adjusted brightness and contrast, improved colors, and enhanced sharpness."
+    };
+    return tips[type] || tips.default;
+  }
+
+  function getImageTypeDescription(type) {
+    const descriptions = {
+      portrait: "Portrait",
+      landscape: "Landscape",
+      food: "Food",
+      pet: "Pet",
+      default: "Image"
+    };
+    return descriptions[type] || descriptions.default;
+  }
+
+  function useSuggestion(text) {
+    messageInput.value = text;
+    messageInput.focus();
+  }
+
+  function updateSmartReplies(replies) {
+    smartReplies.innerHTML = '';
+    replies.forEach(reply => {
+      const span = document.createElement('span');
+      span.textContent = reply;
+      span.onclick = () => useSuggestion(reply);
+      smartReplies.appendChild(span);
+    });
+  }
+
+  function detectImageType(file) {
+    const name = file.name.toLowerCase();
+    if (name.includes('selfie') || name.includes('portrait') || name.includes('face')) return 'portrait';
+    if (name.includes('view') || name.includes('landscape') || name.includes('nature')) return 'landscape';
+    if (name.includes('food') || name.includes('meal') || name.includes('dish')) return 'food';
+    if (name.includes('dog') || name.includes('cat') || name.includes('pet')) return 'pet';
+    return 'default';
+  }
+
+  function analyzeAndImproveImage(file) {
+    const imageType = detectImageType(file);
+    const loadingMsg = appendLoading();
+
+    setTimeout(() => {
+      // Remove loading message
+      chatBox.removeChild(loadingMsg);
+
+      // Get the original image source
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        const suggestions = getImageSuggestions(imageType);
+        appendAnalysis(imageType, suggestions, e.target.result);
+      };
+      reader.readAsDataURL(file);
+    }, 1500);
+  }
+
+  function getImageSuggestions(type) {
+    const suggestions = {
+      portrait: [
+        "Consider adjusting the lighting to be more even",
+        "Try a slight blur effect on the background to make the subject pop",
+        "The white balance could be adjusted for more natural skin tones",
+        "A subtle vignette might add focus to the subject",
+        "Slightly increase contrast for more definition"
+      ],
+      landscape: [
+        "The horizon appears slightly tilted - consider straightening",
+        "Increasing contrast would make the scene more dramatic",
+        "Try boosting saturation for more vibrant colors",
+        "A graduated filter could balance the sky and foreground",
+        "Consider cropping to improve composition using rule of thirds"
+      ],
+      food: [
+        "Increase warmth to make the food look more appetizing",
+        "Boost contrast to make textures more visible",
+        "Try a slight vignette to focus attention on the dish",
+        "The white balance could be adjusted for more natural colors",
+        "Slight sharpening would enhance food details"
+      ],
+      pet: [
+        "Brighten the eyes slightly for more life",
+        "Increase contrast to make fur details pop",
+        "Consider warming the tones for a cozier feel",
+        "A slight vignette would focus attention on your pet",
+        "Try boosting saturation slightly for more vibrant colors"
+      ],
+      default: [
+        "Consider adjusting the exposure for better balance",
+        "The composition could be improved with strategic cropping",
+        "Try increasing contrast for more impact",
+        "White balance adjustment might improve color accuracy",
+        "Sharpening slightly would enhance details"
+      ]
+    };
+    return suggestions[type] || suggestions.default;
+  }
+
+  function simulateTextReply() {
+    setTimeout(() => {
+      const replies = [
+        "I'd be happy to help improve your images! Just upload one.",
+        "For photo improvement suggestions, please share an image.",
+        "I specialize in image enhancement - try sending a photo!",
+        "Let me analyze your photos and suggest improvements."
+      ];
+      const reply = replies[Math.floor(Math.random() * replies.length)];
+      appendMessage('received', reply);
+    }, 1000);
+  }
+</script>
+
+</body>
+</html>

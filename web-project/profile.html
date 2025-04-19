@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profile - AHV Chat</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: -moz-left;
+            background: linear-gradient(to right, #b9a6a6, rgba(11, 11, 23, 0.8))
+
+        }
+        .profile-container {
+            margin-top: 50px;
+            background:whitesmoke;
+            padding: 10px;
+            border-radius: 10px;
+            box-shadow: 0px 4px 10px rgba(0,0,0,0.2);
+            width: 70%;
+            margin-left: 29px;
+            margin-right: initial;
+        }
+
+    </style>
+</head>
+<body>
+
+    <div class="profile-container">
+        <h2>USER PROFILE</h2><text-decoration="underline"></text>
+        <p><strong>Full Name:</strong> <span id="displayFullName"></span>MOHAMMAD AMER AHMED</p>
+        <p><strong>Phone Number:</strong> <span id="displayPhoneNumber"></span>784280886</p>
+        <p><strong>Age:</strong> <span id="displayAge"></span>20</p>
+        <p><strong>Username:</strong> <span id="displayUsername"></span>amerahmed08</p>
+        <p><strong>Password:</strong> <span id="displayPassword"></span>amerahmed123</p>
+    </div>
+
+    <script>
+        // Load saved data from Local Storage
+        document.getElementById('displayFullName').textContent = localStorage.getItem('fullName');
+        document.getElementById('displayPhoneNumber').textContent = localStorage.getItem('phoneNumber');
+        document.getElementById('displayAge').textContent = localStorage.getItem('age');
+        document.getElementById('displayUsername').textContent = localStorage.getItem('username');
+        document.getElementById('displayPassword').textContent = localStorage.getItem('password');
+    </script>
+
+</body>
+</html>

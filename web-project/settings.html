@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <title>Settings</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 20px;
+            transition: background 0.3s, color 0.3s;
+        }
+
+        .light-theme {
+            background: #f4f6f9;
+            color: #222;
+        }
+
+        .dark-theme {
+            background: #1e1e1e;
+            color: #eee;
+        }
+
+        .settings-container {
+            max-width: 600px;
+            margin: 0 auto;
+            background: #fff;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+        }
+
+        .dark-theme .settings-container {
+            background: #2e2e2e;
+            color: #fff;
+        }
+
+        h2 {
+            margin-bottom: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 18px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 6px;
+            font-weight: 600;
+        }
+
+        input[type="text"],
+        input[type="email"],
+        input[type="currentpassword"]
+        input[type="password"],
+        select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+        }
+
+        .form-group img {
+            display: block;
+            width: 80px;
+            height: 80px;
+            object-fit: cover;
+            border-radius: 50%;
+            margin-bottom: 10px;
+            border: 2px solid #ddd;
+        }
+
+        .form-actions {
+            display: flex;
+            justify-content: space-between;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        button {
+            padding: 10px 18px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 14px;
+        }
+
+        .save-btn {
+            background-color: #2ecc71;
+            color: white;
+        }
+
+        .reset-btn {
+            background-color: #e74c3c;
+            color: white;
+        }
+
+        .toggle-group {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .back-link {
+            display: inline-block;
+            margin-bottom: 15px;
+            text-decoration: none;
+            color: #3498db;
+        }
+
+        .back-link:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+
+<div class="settings-container">
+    <a class="back-link" href="login-success.html">&larr; Back to App</a>
+    <h2>Settings</h2>
+
+    <div class="form-group">
+        <label for="profilePic">Profile Picture</label>
+        <img id="preview" src="https://via.placeholder.com/80" alt="Profile Preview" />
+        <input type="file" id="profilePic" accept="image/*" />
+    </div>
+
+    <div class="form-group">
+        <label for="username">Username</label>
+        <input type="text" id="username" placeholder="Enter username" />
+    </div>
+
+    <div class="form-group">
+        <label for="email">Email</label>
+        <input type="email" id="email" placeholder="you@example.com" />
+    </div>
+
+    <div class="form-group">
+        <label for="currentPassword">Current Password</label>
+        <input type="password" id="currentPassword" placeholder="Current Password"
+    </div>
+
+    <div class="form-group">
+        <label for="newPassword">New Password</label>
+        <input type="password" id="newPassword" placeholder="New password" />
+    </div>
+
+    <div class="form-group">
+        <label for="theme">Theme</label>
+        <select id="theme">
+            <option value="light">Light</option>
+            <option value="dark">Dark</option>
+        </select>
+    </div>
+
+    <div class="form-group">
+        <label>Notifications</label>
+        <div class="toggle-group">
+            <input type="checkbox" id="notifyMessages" />
+            <label for="notifyMessages">Enable Message Notifications</label>
+        </div>
+        <div class="toggle-group">
+            <input type="checkbox" id="notifyLikes" />
+            <label for="notifyLikes">Enable Like Alerts</label>
+        </div>
+    </div>
+
+    <div class="form-actions">
+        <button class="save-btn" onclick="saveSettings()">Save</button>
+        <button class="reset-btn" onclick="resetForm()">Reset</button>
+    </div>
+</div>
+
+<script>
+    const preview = document.getElementById('preview');
+    const profilePic = document.getElementById('profilePic');
+    const username = document.getElementById('username');
+    const email = document.getElementById('email');
+    const password = document.getElementById('newPassword');
+    const theme = document.getElementById('theme');
+    const notifyMessages = document.getElementById('notifyMessages');
+    const notifyLikes = document.getElementById('notifyLikes');
+
+    // Load saved settings
+    window.onload = () => {
+        const settings = JSON.parse(localStorage.getItem('userSettings')) || {};
+        if (settings.profilePic) preview.src = settings.profilePic;
+        if (settings.username) username.value = settings.username;
+        if (settings.email) email.value = settings.email;
+        if (settings.theme) {
+            theme.value = settings.theme;
+            applyTheme(settings.theme);
+        }
+        notifyMessages.checked = settings.notifyMessages || false;
+        notifyLikes.checked = settings.notifyLikes || false;
+    };
+
+    // Image preview
+    profilePic.addEventListener('change', () => {
+        const file = profilePic.files[0];
+        if (file && file.type.startsWith("image/")) {
+            const reader = new FileReader();
+            reader.onload = () => {
+                preview.src = reader.result;
+            };
+            reader.readAsDataURL(file);
+        }
+    });
+
+    // Save settings
+    function saveSettings() {
+        const settings = {
+            profilePic: preview.src,
+            username: username.value.trim(),
+            email: email.value.trim(),
+            theme: theme.value,
+            notifyMessages: notifyMessages.checked,
+            notifyLikes: notifyLikes.checked
+        };
+        localStorage.setItem("userSettings", JSON.stringify(settings));
+        applyTheme(settings.theme);
+        alert("Settings saved!");
+    }
+
+    // Apply theme
+    function applyTheme(mode) {
+        document.body.classList.remove("light-theme", "dark-theme");
+        document.body.classList.add(`${mode}-theme`);
+    }
+
+    // Reset form
+    function resetForm() {
+        localStorage.removeItem("userSettings");
+        location.reload();
+    }
+
+    // Theme live change
+    theme.addEventListener("change", () => {
+        applyTheme(theme.value);
+    });
+</script>
+
+</body>
+</html>

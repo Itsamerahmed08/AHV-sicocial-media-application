@@ -1,0 +1,1127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AHV Chat - Professional UI</title>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Arial', sans-serif;
+        }
+
+        body {
+            background: #f0f2f5;
+            color: #333;
+        }
+
+        .container {
+            width: 90%;
+            max-width: 1200px;
+            margin: auto;
+        }
+
+        .navbar {
+            background: #007bff;
+            color: white;
+            padding: 15px 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: bold;
+            text-decoration: none;
+            color: white;
+            margin-left: 20px;
+        }
+
+        .nav-menu {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .nav-link {
+            color: white;
+            text-decoration: none;
+            font-weight: 500;
+            padding: 8px 12px;
+            border-radius: 4px;
+            transition: background-color 0.3s;
+        }
+
+        .nav-link:hover {
+            background-color: rgba(255, 255, 255, 0.2);
+        }
+
+        .user-menu {
+            position: relative;
+            margin-right: 20px;
+        }
+
+        .user-button {
+            background: none;
+            border: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: white;
+            font-weight: 500;
+        }
+
+        .user-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background-color: white;
+            color: #007bff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+        }
+
+        .dropdown-menu {
+            position: absolute;
+            right: 0;
+            top: 100%;
+            background: white;
+            min-width: 180px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            border-radius: 8px;
+            padding: 8px 0;
+            z-index: 100;
+            display: none;
+        }
+
+        .dropdown-menu.show {
+            display: block;
+        }
+
+        .dropdown-item {
+            padding: 10px 16px;
+            color: #333;
+            text-decoration: none;
+            display: block;
+            transition: background-color 0.2s;
+        }
+
+        .dropdown-item:hover {
+            background-color: #f5f5f5;
+        }
+
+        .dropdown-divider {
+            height: 1px;
+            background-color: #e9ecef;
+            margin: 4px 0;
+        }
+
+        .main-content {
+            display: flex;
+            margin-top: 20px;
+            gap: 20px;
+        }
+
+        .sidebar {
+            width: 250px;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .sidebar-title {
+            font-size: 1rem;
+            font-weight: bold;
+            color: #666;
+            margin-bottom: 16px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .sidebar-item {
+            display: flex;
+            align-items: center;
+            padding: 12px;
+            font-size: 1rem;
+            color: #333;
+            text-decoration: none;
+            transition: 0.3s;
+            border-radius: 5px;
+            margin-bottom: 4px;
+            cursor: pointer;
+        }
+
+        .sidebar-item i {
+            margin-right: 10px;
+            width: 20px;
+            text-align: center;
+        }
+
+        .sidebar-item:hover {
+            background: #007bff;
+            color: white;
+        }
+
+        .sidebar-item.active {
+            background: #007bff;
+            color: white;
+        }
+
+        .main {
+            flex: 1;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .post-form {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-bottom: 20px;
+            padding: 15px;
+            background: #f9f9f9;
+            border-radius: 8px;
+        }
+
+        .input {
+            flex: 1;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 14px;
+        }
+
+        .textarea {
+            flex: 1;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 14px;
+            min-height: 80px;
+            resize: vertical;
+        }
+
+        .button {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: 0.3s;
+            font-weight: 500;
+        }
+
+        .button:hover {
+            background: #0056b3;
+        }
+
+        .button.secondary {
+            background: #6c757d;
+        }
+
+        .button.secondary:hover {
+            background: #5a6268;
+        }
+
+        .file-upload {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .file-upload-label {
+            padding: 8px 12px;
+            background: #e9ecef;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .file-upload-input {
+            display: none;
+        }
+
+        .post {
+            background: white;
+            margin-top: 15px;
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+
+        .post-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .post-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: #007bff;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            margin-right: 10px;
+        }
+
+        .post-user {
+            font-weight: bold;
+        }
+
+        .post-time {
+            color: #666;
+            font-size: 0.8rem;
+            margin-left: 8px;
+        }
+
+        .post-content {
+            margin-bottom: 10px;
+        }
+
+        .post-image {
+            width: 100%;
+            max-height: 400px;
+            object-fit: contain;
+            border-radius: 8px;
+            margin-top: 10px;
+            cursor: pointer;
+        }
+
+        .post-actions {
+            display: flex;
+            gap: 15px;
+            margin-top: 15px;
+            padding-top: 10px;
+            border-top: 1px solid #eee;
+        }
+
+        .post-action {
+            display: flex;
+            align-items: center;
+            color: #666;
+            font-size: 0.9rem;
+            cursor: pointer;
+        }
+
+        .post-action i {
+            margin-right: 5px;
+        }
+
+        .post-action.active {
+            color: #007bff;
+        }
+
+        .rating-stars {
+            display: flex;
+            gap: 5px;
+            margin-top: 10px;
+        }
+
+        .star {
+            color: #ccc;
+            font-size: 20px;
+            cursor: pointer;
+            transition: color 0.2s;
+        }
+
+        .star.active {
+            color: #ffc107;
+        }
+
+        .photos-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .photo-item {
+            position: relative;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            cursor: pointer;
+            aspect-ratio: 1/1;
+        }
+
+        .photo-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.3s;
+        }
+
+        .photo-item:hover img {
+            transform: scale(1.05);
+        }
+
+        .photo-actions {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: rgba(0, 0, 0, 0.7);
+            padding: 8px;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .photo-action {
+            color: white;
+            cursor: pointer;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal.show {
+            display: flex;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 8px;
+            max-width: 800px;
+            width: 90%;
+            max-height: 90vh;
+            overflow: auto;
+            position: relative;
+        }
+
+        .modal-close {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: rgba(0, 0, 0, 0.5);
+            color: white;
+            border: none;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            z-index: 10;
+        }
+
+        .modal-image {
+            width: 100%;
+            max-height: 70vh;
+            object-fit: contain;
+        }
+
+        .modal-body {
+            padding: 20px;
+        }
+
+        .modal-rating {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin: 15px 0;
+        }
+
+        .modal-rating-value {
+            font-weight: bold;
+            color: #ffc107;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .no-content {
+            text-align: center;
+            padding: 40px;
+            color: #666;
+        }
+
+        .no-content i {
+            font-size: 40px;
+            margin-bottom: 15px;
+            color: #ccc;
+        }
+    </style>
+</head>
+<body>
+<nav class="navbar">
+    <a href="#" class="logo">AHV Chat</a>
+    <div class="nav-menu">
+        <a href="#" class="nav-link">Home</a>
+        <a href="#" class="nav-link">Messages</a>
+        <a href="#" class="nav-link">Notifications</a>
+        <div class="user-menu">
+            <button class="user-button" id="userMenuButton">
+                <div class="user-avatar">AH</div>
+                <span>Admin</span>
+                <i class="fas fa-chevron-down" style="font-size: 12px;"></i>
+            </button>
+            <div class="dropdown-menu" id="userDropdown">
+                <a href="profile.html" class="dropdown-item"><i class="fas fa-user-circle" style="margin-right: 8px;"></i> Profile</a>
+                <a href="#" class="dropdown-item"><i class="fas fa-cog" style="margin-right: 8px;"></i> Account Settings</a>
+                <div class="dropdown-divider"></div>
+                <a href="#" class="dropdown-item"><i class="fas fa-sign-out-alt" style="margin-right: 8px;"></i> Logout</a>
+            </div>
+        </div>
+    </div>
+</nav>
+
+<div class="container main-content">
+    <aside class="sidebar">
+        <div class="sidebar-title">Menu</div>
+        <div class="sidebar-item active" data-tab="home"><i class="fas fa-home"></i> Home</div>
+        <div class="sidebar-item" data-tab="friends"><i class="fas fa-users"></i> Friends</div>
+        <div class="sidebar-item" data-tab="ratings"><i class="fas fa-star"></i> Ratings</div>
+        <div class="sidebar-item" data-tab="photos"><i class="fas fa-image"></i> Photos</div>
+        <div class="sidebar-item" data-tab="events"><i class="fas fa-calendar"></i> Events</div>
+        <div class="sidebar-item" data-tab="saved"><i class="fas fa-bookmark"></i> Saved</div>
+
+        <div class="sidebar-title" style="margin-top: 20px;">Groups</div>
+        <div class="sidebar-item"><i class="fas fa-users"></i> Developers</div>
+        <div class="sidebar-item"><i class="fas fa-users"></i> Designers</div>
+        <div class="sidebar-item"><i class="fas fa-users"></i> Marketing</div>
+    </aside>
+
+    <main class="main">
+        <!-- Home Tab -->
+        <div class="tab-content active" id="home-tab">
+            <div class="post-form">
+                <textarea class="textarea" placeholder="Share your thoughts..." id="postContent"></textarea>
+                <div class="file-upload">
+                    <label for="postImage" class="file-upload-label">
+                        <i class="fas fa-image"></i> Add Photo
+                    </label>
+                    <input type="file" id="postImage" class="file-upload-input" accept="image/*">
+                    <span id="fileName">No file chosen</span>
+                </div>
+                <button class="button" id="postButton">Post</button>
+            </div>
+
+            <div class="posts" id="postsContainer">
+                <!-- Posts will be added here dynamically -->
+            </div>
+        </div>
+
+        <!-- Ratings Tab -->
+        <div class="tab-content" id="ratings-tab">
+            <h2>Rate Photos</h2>
+            <div id="ratingsContainer">
+                <div class="no-content">
+                    <i class="fas fa-star"></i>
+                    <p>No photos available for rating yet. Post some photos first!</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Photos Tab -->
+        <div class="tab-content" id="photos-tab">
+            <div class="post-form">
+                <div class="file-upload">
+                    <label for="uploadPhoto" class="file-upload-label">
+                        <i class="fas fa-cloud-upload-alt"></i> Upload Photo
+                    </label>
+                    <input type="file" id="uploadPhoto" class="file-upload-input" accept="image/*">
+                    <span id="photoFileName">No file chosen</span>
+                </div>
+                <button class="button" id="uploadButton">Upload</button>
+            </div>
+
+            <div class="photos-container" id="photosContainer">
+                <div class="no-content">
+                    <i class="fas fa-images"></i>
+                    <p>No photos uploaded yet. Upload some photos to get started!</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Other tabs (empty for now) -->
+        <div class="tab-content" id="friends-tab">
+            <div class="no-content">
+                <i class="fas fa-users"></i>
+                <p>Friends feature coming soon!</p>
+            </div>
+        </div>
+        <div class="tab-content" id="events-tab">
+            <div class="no-content">
+                <i class="fas fa-calendar"></i>
+                <p>Events feature coming soon!</p>
+            </div>
+        </div>
+        <div class="tab-content" id="saved-tab">
+            <div class="no-content">
+                <i class="fas fa-bookmark"></i>
+                <p>Saved items feature coming soon!</p>
+            </div>
+        </div>
+    </main>
+</div>
+
+<!-- Image Modal -->
+<div class="modal" id="imageModal">
+    <div class="modal-content">
+        <button class="modal-close" id="modalClose">&times;</button>
+        <img src="" alt="Full size" class="modal-image" id="modalImage">
+        <div class="modal-body">
+            <div class="post-header">
+                <div class="post-avatar">AH</div>
+                <div>
+                    <span class="post-user" id="modalUser">AHV</span>
+                    <span class="post-time" id="modalTime">10 mins ago</span>
+                </div>
+            </div>
+            <p id="modalCaption">Beautiful sunset today! 🌅</p>
+            <div class="modal-rating">
+                <span>Your rating:</span>
+                <div class="rating-stars" id="modalRatingStars">
+                    <i class="fas fa-star star" data-value="1"></i>
+                    <i class="fas fa-star star" data-value="2"></i>
+                    <i class="fas fa-star star" data-value="3"></i>
+                    <i class="fas fa-star star" data-value="4"></i>
+                    <i class="fas fa-star star" data-value="5"></i>
+                </div>
+                <span class="modal-rating-value" id="modalRatingValue">Not rated</span>
+            </div>
+            <button class="button" id="saveRatingButton">Save Rating</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Sample data
+    let posts = [
+        {
+            id: 1,
+            user: 'AHV',
+            avatar: 'AH',
+            time: '10 mins ago',
+            content: 'Beautiful sunset today! 🌅',
+            image: 'https://images.unsplash.com/photo-1492681290082-e932832941e6?w=500&q=80',
+            likes: 5,
+            comments: 2,
+            ratings: {}
+        }
+    ];
+
+    let currentUser = 'Admin';
+    let currentTab = 'home';
+    let currentModalPostId = null;
+    let photos = [];
+
+    // DOM Elements
+    const userMenuButton = document.getElementById('userMenuButton');
+    const userDropdown = document.getElementById('userDropdown');
+    const sidebarItems = document.querySelectorAll('.sidebar-item');
+    const tabContents = document.querySelectorAll('.tab-content');
+    const postContent = document.getElementById('postContent');
+    const postImage = document.getElementById('postImage');
+    const fileName = document.getElementById('fileName');
+    const postButton = document.getElementById('postButton');
+    const postsContainer = document.getElementById('postsContainer');
+    const uploadPhoto = document.getElementById('uploadPhoto');
+    const photoFileName = document.getElementById('photoFileName');
+    const uploadButton = document.getElementById('uploadButton');
+    const photosContainer = document.getElementById('photosContainer');
+    const ratingsContainer = document.getElementById('ratingsContainer');
+    const imageModal = document.getElementById('imageModal');
+    const modalClose = document.getElementById('modalClose');
+    const modalImage = document.getElementById('modalImage');
+    const modalUser = document.getElementById('modalUser');
+    const modalTime = document.getElementById('modalTime');
+    const modalCaption = document.getElementById('modalCaption');
+    const modalRatingStars = document.querySelectorAll('#modalRatingStars .star');
+    const modalRatingValue = document.getElementById('modalRatingValue');
+    const saveRatingButton = document.getElementById('saveRatingButton');
+
+    // Initialize the app
+    function init() {
+        renderPosts();
+        setupEventListeners();
+    }
+
+    // Set up event listeners
+    function setupEventListeners() {
+        // User dropdown
+        userMenuButton.addEventListener('click', function() {
+            userDropdown.classList.toggle('show');
+        });
+
+        // Close dropdown when clicking outside
+        window.addEventListener('click', function(event) {
+            if (!event.target.matches('.user-button') && !event.target.closest('.user-menu')) {
+                if (userDropdown.classList.contains('show')) {
+                    userDropdown.classList.remove('show');
+                }
+            }
+        });
+
+        // Sidebar navigation
+        sidebarItems.forEach(item => {
+            item.addEventListener('click', function() {
+                const tab = this.getAttribute('data-tab');
+                if (tab) {
+                    switchTab(tab);
+                }
+            });
+        });
+
+        // File input change
+        postImage.addEventListener('change', function() {
+            if (this.files.length > 0) {
+                fileName.textContent = this.files[0].name;
+            } else {
+                fileName.textContent = 'No file chosen';
+            }
+        });
+
+        uploadPhoto.addEventListener('change', function() {
+            if (this.files.length > 0) {
+                photoFileName.textContent = this.files[0].name;
+            } else {
+                photoFileName.textContent = 'No file chosen';
+            }
+        });
+
+        // Post button
+        postButton.addEventListener('click', createPost);
+
+        // Upload button
+        uploadButton.addEventListener('click', uploadPhotoHandler);
+
+        // Modal close
+        modalClose.addEventListener('click', closeModal);
+
+        // Rating stars
+        modalRatingStars.forEach(star => {
+            star.addEventListener('click', function() {
+                const value = parseInt(this.getAttribute('data-value'));
+                setRating(value);
+            });
+        });
+
+        // Save rating button
+        saveRatingButton.addEventListener('click', saveRating);
+    }
+
+    // Switch between tabs
+    function switchTab(tab) {
+        currentTab = tab;
+
+        // Update active sidebar item
+        sidebarItems.forEach(item => {
+            item.classList.remove('active');
+            if (item.getAttribute('data-tab') === tab) {
+                item.classList.add('active');
+            }
+        });
+
+        // Show the correct tab content
+        tabContents.forEach(content => {
+            content.classList.remove('active');
+            if (content.id === `${tab}-tab`) {
+                content.classList.add('active');
+            }
+        });
+
+        // Special handling for certain tabs
+        if (tab === 'ratings') {
+            renderRatings();
+        } else if (tab === 'photos') {
+            renderPhotos();
+        }
+    }
+
+    // Create a new post
+    function createPost() {
+        const content = postContent.value.trim();
+        const file = postImage.files[0];
+
+        if (!content && !file) {
+            alert('Please add some content or an image to your post');
+            return;
+        }
+
+        const newPost = {
+            id: posts.length + 1,
+            user: currentUser,
+            avatar: currentUser.substring(0, 2),
+            time: 'Just now',
+            content: content,
+            image: file ? URL.createObjectURL(file) : null,
+            likes: 0,
+            comments: 0,
+            ratings: {}
+        };
+
+        posts.unshift(newPost); // Add to beginning of array
+        renderPosts();
+
+        // Reset form
+        postContent.value = '';
+        postImage.value = '';
+        fileName.textContent = 'No file chosen';
+
+        // If we're on the photos tab, update it
+        if (currentTab === 'photos') {
+            renderPhotos();
+        }
+    }
+
+    // Upload photo handler
+    function uploadPhotoHandler() {
+        const file = uploadPhoto.files[0];
+
+        if (!file) {
+            alert('Please select a photo to upload');
+            return;
+        }
+
+        const newPhoto = {
+            id: photos.length + 1,
+            url: URL.createObjectURL(file),
+            user: currentUser,
+            time: 'Just now',
+            ratings: {}
+        };
+
+        photos.unshift(newPhoto);
+        renderPhotos();
+
+        // Reset form
+        uploadPhoto.value = '';
+        photoFileName.textContent = 'No file chosen';
+    }
+
+    // Render all posts
+    function renderPosts() {
+        postsContainer.innerHTML = '';
+
+        if (posts.length === 0) {
+            postsContainer.innerHTML = `
+                <div class="no-content">
+                    <i class="fas fa-comment-alt"></i>
+                    <p>No posts yet. Be the first to post something!</p>
+                </div>
+            `;
+            return;
+        }
+
+        posts.forEach(post => {
+            const postElement = document.createElement('div');
+            postElement.className = 'post';
+            postElement.innerHTML = `
+                <div class="post-header">
+                    <div class="post-avatar">${post.avatar}</div>
+                    <div>
+                        <span class="post-user">${post.user}</span>
+                        <span class="post-time">${post.time}</span>
+                    </div>
+                </div>
+                <div class="post-content">
+                    <p>${post.content}</p>
+                    ${post.image ? `<img src="${post.image}" alt="Post image" class="post-image" data-post-id="${post.id}">` : ''}
+                </div>
+                <div class="post-actions">
+                    <div class="post-action" data-action="like" data-post-id="${post.id}">
+                        <i class="far fa-thumbs-up"></i> Like (${post.likes})
+                    </div>
+                    <div class="post-action" data-action="comment" data-post-id="${post.id}">
+                        <i class="far fa-comment"></i> Comment (${post.comments})
+                    </div>
+                    <div class="post-action" data-action="rate" data-post-id="${post.id}">
+                        <i class="fas fa-star"></i> Rate
+                    </div>
+                </div>
+            `;
+            postsContainer.appendChild(postElement);
+        });
+
+        // Add event listeners to post images
+        document.querySelectorAll('.post-image').forEach(img => {
+            img.addEventListener('click', function() {
+                openImageModal(parseInt(this.getAttribute('data-post-id')));
+            });
+        });
+
+        // Add event listeners to post actions
+        document.querySelectorAll('.post-action[data-action="like"]').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const postId = parseInt(this.getAttribute('data-post-id'));
+                likePost(postId);
+            });
+        });
+
+        document.querySelectorAll('.post-action[data-action="rate"]').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const postId = parseInt(this.getAttribute('data-post-id'));
+                openImageModal(postId);
+            });
+        });
+    }
+
+    // Render photos
+    function renderPhotos() {
+        photosContainer.innerHTML = '';
+
+        if (photos.length === 0) {
+            photosContainer.innerHTML = `
+                <div class="no-content">
+                    <i class="fas fa-images"></i>
+                    <p>No photos uploaded yet. Upload some photos to get started!</p>
+                </div>
+            `;
+            return;
+        }
+
+        photos.forEach(photo => {
+            const photoElement = document.createElement('div');
+            photoElement.className = 'photo-item';
+            photoElement.innerHTML = `
+                <img src="${photo.url}" alt="User photo" data-photo-id="${photo.id}">
+                <div class="photo-actions">
+                    <div class="photo-action" data-action="view" data-photo-id="${photo.id}">
+                        <i class="fas fa-eye"></i>
+                    </div>
+                    <div class="photo-action" data-action="rate" data-photo-id="${photo.id}">
+                        <i class="fas fa-star"></i>
+                    </div>
+                </div>
+            `;
+            photosContainer.appendChild(photoElement);
+        });
+
+        // Add event listeners to photos
+        document.querySelectorAll('.photo-action[data-action="view"]').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const photoId = parseInt(this.getAttribute('data-photo-id'));
+                openPhotoModal(photoId);
+            });
+        });
+
+        document.querySelectorAll('.photo-action[data-action="rate"]').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const photoId = parseInt(this.getAttribute('data-photo-id'));
+                openPhotoModal(photoId);
+            });
+        });
+    }
+
+    // Render ratings
+    function renderRatings() {
+        ratingsContainer.innerHTML = '';
+
+        // Combine posts and photos that have images
+        const itemsToRate = [
+            ...posts.filter(post => post.image),
+            ...photos
+        ];
+
+        if (itemsToRate.length === 0) {
+            ratingsContainer.innerHTML = `
+                <div class="no-content">
+                    <i class="fas fa-star"></i>
+                    <p>No photos available for rating yet. Post some photos first!</p>
+                </div>
+            `;
+            return;
+        }
+
+        itemsToRate.forEach(item => {
+            const ratingElement = document.createElement('div');
+            ratingElement.className = 'post';
+            ratingElement.innerHTML = `
+                <div class="post-header">
+                    <div class="post-avatar">${item.avatar || item.user.substring(0, 2)}</div>
+                    <div>
+                        <span class="post-user">${item.user}</span>
+                        <span class="post-time">${item.time}</span>
+                    </div>
+                </div>
+                <div class="post-content">
+                    ${item.content ? `<p>${item.content}</p>` : ''}
+                    <img src="${item.image || item.url}" alt="Rating image" class="post-image" data-item-id="${item.id}" data-type="${item.image ? 'post' : 'photo'}">
+                </div>
+                <div class="post-actions">
+                    <div class="post-action" data-action="rate" data-item-id="${item.id}" data-type="${item.image ? 'post' : 'photo'}">
+                        <i class="fas fa-star"></i> Rate This Photo
+                    </div>
+                </div>
+            `;
+            ratingsContainer.appendChild(ratingElement);
+        });
+
+        // Add event listeners to rating images
+        document.querySelectorAll('.post-image').forEach(img => {
+            img.addEventListener('click', function() {
+                const itemId = parseInt(this.getAttribute('data-item-id'));
+                const type = this.getAttribute('data-type');
+                openRatingModal(itemId, type);
+            });
+        });
+
+        // Add event listeners to rate buttons
+        document.querySelectorAll('.post-action[data-action="rate"]').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const itemId = parseInt(this.getAttribute('data-item-id'));
+                const type = this.getAttribute('data-type');
+                openRatingModal(itemId, type);
+            });
+        });
+    }
+
+    // Like a post
+    function likePost(postId) {
+        const post = posts.find(p => p.id === postId);
+        if (post) {
+            post.likes++;
+            renderPosts();
+        }
+    }
+
+    // Open image modal for a post
+    function openImageModal(postId) {
+        const post = posts.find(p => p.id === postId);
+        if (post && post.image) {
+            currentModalPostId = postId;
+            modalImage.src = post.image;
+            modalUser.textContent = post.user;
+            modalTime.textContent = post.time;
+            modalCaption.textContent = post.content;
+
+            // Check if user has already rated this post
+            const userRating = post.ratings[currentUser] || 0;
+            setRating(userRating);
+
+            imageModal.classList.add('show');
+        }
+    }
+
+    // Open photo modal
+    function openPhotoModal(photoId) {
+        const photo = photos.find(p => p.id === photoId);
+        if (photo) {
+            currentModalPostId = photoId;
+            modalImage.src = photo.url;
+            modalUser.textContent = photo.user;
+            modalTime.textContent = photo.time;
+            modalCaption.textContent = '';
+
+            // Check if user has already rated this photo
+            const userRating = photo.ratings[currentUser] || 0;
+            setRating(userRating);
+
+            imageModal.classList.add('show');
+        }
+    }
+
+    // Open rating modal (generic for both posts and photos)
+    function openRatingModal(itemId, type) {
+        if (type === 'post') {
+            openImageModal(itemId);
+        } else {
+            openPhotoModal(itemId);
+        }
+    }
+
+    // Close modal
+    function closeModal() {
+        imageModal.classList.remove('show');
+    }
+
+    // Set rating stars
+    function setRating(value) {
+        modalRatingStars.forEach(star => {
+            const starValue = parseInt(star.getAttribute('data-value'));
+            if (starValue <= value) {
+                star.classList.add('active');
+            } else {
+                star.classList.remove('active');
+            }
+        });
+
+        if (value > 0) {
+            modalRatingValue.textContent = `${value}/5`;
+        } else {
+            modalRatingValue.textContent = 'Not rated';
+        }
+    }
+
+    // Save rating
+    function saveRating() {
+        if (!currentModalPostId) return;
+
+        // Get the rating value
+        let ratingValue = 0;
+        modalRatingStars.forEach(star => {
+            if (star.classList.contains('active')) {
+                ratingValue = parseInt(star.getAttribute('data-value'));
+            }
+        });
+
+        if (ratingValue === 0) {
+            alert('Please select a rating before saving');
+            return;
+        }
+
+        // Determine if we're rating a post or a photo
+        const post = posts.find(p => p.id === currentModalPostId);
+        const photo = photos.find(p => p.id === currentModalPostId);
+
+        if (post) {
+            post.ratings[currentUser] = ratingValue;
+        } else if (photo) {
+            photo.ratings[currentUser] = ratingValue;
+        }
+
+        closeModal();
+
+        // Refresh the current view
+        if (currentTab === 'ratings') {
+            renderRatings();
+        } else if (currentTab === 'photos') {
+            renderPhotos();
+        } else {
+            renderPosts();
+        }
+    }
+
+    // Initialize the app
+    init();
+</script>
+</body>
+</html>

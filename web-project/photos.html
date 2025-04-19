@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <title>Photo Feed App</title>
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        html, body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            height: 100%;
+            overflow: hidden;
+        }
+
+        body {
+            background: black;
+            color: white;
+        }
+
+        canvas#bgCanvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            z-index: -1;
+        }
+
+        main {
+            position: relative;
+            z-index: 2;
+            padding: 20px;
+            max-width: 600px;
+            margin: auto;
+        }
+
+        h2 {
+            color: #f8f8f8;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        input[type="file"] {
+            margin-bottom: 15px;
+            display: block;
+            width: 100%;
+        }
+
+        img {
+            max-width: 100%;
+            max-height: 300px;
+            border-radius: 12px;
+            margin-bottom: 10px;
+            object-fit: contain;
+            border: 1px solid #ddd;
+            background-color: #111;
+        }
+
+        #counter {
+            text-align: center;
+            margin-bottom: 10px;
+            color: #ccc;
+        }
+
+        .navigation {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .navigation button {
+            padding: 10px 16px;
+            background-color: #3498db;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: background 0.3s;
+        }
+
+        .navigation button:hover {
+            background-color: #2980b9;
+        }
+
+        .rating,
+        .comments {
+            background-color: rgba(255, 255, 255, 0.05);
+            border: 1px solid #333;
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 20px;
+        }
+
+        .star {
+            font-size: 28px;
+            color: gray;
+            cursor: pointer;
+        }
+
+        .star.active {
+            color: gold;
+        }
+
+        #avgRating {
+            margin-top: 6px;
+            color: #ccc;
+            font-size: 14px;
+        }
+
+        .comment-box {
+            display: flex;
+            gap: 8px;
+            margin-top: 10px;
+        }
+
+        #commentInput {
+            flex: 1;
+            padding: 8px 12px;
+            border-radius: 6px;
+            border: none;
+            background-color: #222;
+            color: white;
+        }
+
+        #addComment {
+            padding: 8px 12px;
+            background-color: #2ecc71;
+            border: none;
+            border-radius: 6px;
+            color: white;
+            cursor: pointer;
+        }
+
+        #addComment:hover {
+            background-color: #27ae60;
+        }
+
+        .comment {
+            background-color: #1f1f1f;
+            padding: 8px 10px;
+            border-radius: 6px;
+            margin-top: 6px;
+            color: #eee;
+        }
+
+        #deleteBtn {
+            margin-top: 10px;
+            background-color: #e74c3c;
+            color: white;
+            border: none;
+            padding: 10px 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            display: block;
+            width: 100%;
+        }
+
+        #deleteBtn:disabled {
+            background-color: #555;
+            cursor: not-allowed;
+        }
+    </style>
+</head>
+<body>
+
+<canvas id="bgCanvas"></canvas>
+
+<main>
+    <h2>Photo Feed</h2>
+    <input type="file" id="upload" accept="image/*" />
+    <img id="photo" src="" alt="No photo available" />
+    <div id="counter">0 of 0</div>
+
+    <div class="navigation">
+        <button id="prevBtn">Previous</button>
+        <button id="nextBtn">Next</button>
+    </div>
+
+    <div class="rating">
+        <span class="star" data-value="1">&#9733;</span>
+        <span class="star" data-value="2">&#9733;</span>
+        <span class="star" data-value="3">&#9733;</span>
+        <span class="star" data-value="4">&#9733;</span>
+        <span class="star" data-value="5">&#9733;</span>
+        <div id="avgRating">Average Rating: Not rated yet</div>
+    </div>
+
+    <div class="comments">
+        <h4>Comments</h4>
+        <div class="comment-box">
+            <input type="text" id="commentInput" placeholder="Add a comment" />
+            <button id="addComment">Post</button>
+        </div>
+        <div id="commentList"></div>
+    </div>
+
+    <button id="deleteBtn">Delete Photo</button>
+</main>
+
+<script>
+    // BUBBLE ANIMATION
+    const canvas = document.getElementById("bgCanvas");
+    const ctx = canvas.getContext("2d");
+
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+
+    const bubbles = [];
+
+    for (let i = 0; i < 50; i++) {
+        bubbles.push({
+            x: Math.random() * canvas.width,
+            y: Math.random() * canvas.height,
+            r: Math.random() * 8 + 2,
+            dx: Math.random() * 1 - 0.5,
+            dy: Math.random() * 1.5 + 0.5,
+            opacity: Math.random() * 0.5 + 0.3,
+        });
+    }
+
+    function animate() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        bubbles.forEach(bubble => {
+            ctx.beginPath();
+            ctx.arc(bubble.x, bubble.y, bubble.r, 0, Math.PI * 2);
+            ctx.fillStyle = `rgba(255, 255, 255, ${bubble.opacity})`;
+            ctx.fill();
+            bubble.y -= bubble.dy;
+            bubble.x += bubble.dx;
+            if (bubble.y < 0) bubble.y = canvas.height;
+            if (bubble.x < 0 || bubble.x > canvas.width) bubble.dx *= -1;
+        });
+        requestAnimationFrame(animate);
+    }
+
+    animate();
+    window.addEventListener("resize", () => {
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+    });
+
+    // APP FUNCTIONALITY
+    const upload = document.getElementById("upload");
+    const photo = document.getElementById("photo");
+    const counter = document.getElementById("counter");
+    const prevBtn = document.getElementById("prevBtn");
+    const nextBtn = document.getElementById("nextBtn");
+    const stars = document.querySelectorAll(".star");
+    const avgRating = document.getElementById("avgRating");
+    const commentInput = document.getElementById("commentInput");
+    const addComment = document.getElementById("addComment");
+    const commentList = document.getElementById("commentList");
+    const deleteBtn = document.getElementById("deleteBtn");
+
+    let photos = JSON.parse(localStorage.getItem("photoFeed")) || [];
+    let currentIndex = 0;
+
+    function displayPhoto(index) {
+        if (photos.length === 0) {
+            photo.src = "";
+            photo.alt = "No photo available";
+            counter.textContent = "0 of 0";
+            avgRating.textContent = "Average Rating: Not rated yet";
+            commentList.innerHTML = "<div class='comment'>No comments. Add one!</div>";
+            deleteBtn.disabled = true;
+            return;
+        }
+
+        const item = photos[index];
+        photo.src = item.image;
+        photo.alt = `Photo ${index + 1}`;
+        counter.textContent = `${index + 1} of ${photos.length}`;
+        updateStars(item.ratings);
+        displayComments(item.comments);
+        deleteBtn.disabled = false;
+    }
+
+    function updateStars(ratings) {
+        const avg = ratings.length ? (ratings.reduce((a, b) => a + b) / ratings.length).toFixed(1) : 0;
+        avgRating.textContent = ratings.length ? `Average Rating: ${avg}` : "Average Rating: Not rated yet";
+        stars.forEach(s => s.classList.remove("active"));
+    }
+
+    function displayComments(comments) {
+        if (!comments.length) {
+            commentList.innerHTML = "<div class='comment'>No comments. Add one!</div>";
+            return;
+        }
+        commentList.innerHTML = "";
+        comments.forEach(c => {
+            const div = document.createElement("div");
+            div.className = "comment";
+            div.textContent = c;
+            commentList.appendChild(div);
+        });
+    }
+
+    upload.addEventListener("change", (e) => {
+        const file = e.target.files[0];
+        if (!file || !file.type.startsWith("image/")) return;
+
+        const reader = new FileReader();
+        reader.onload = () => {
+            photos.push({
+                image: reader.result,
+                ratings: [],
+                comments: []
+            });
+            localStorage.setItem("photoFeed", JSON.stringify(photos));
+            currentIndex = photos.length - 1;
+            displayPhoto(currentIndex);
+            upload.value = "";
+        };
+        reader.readAsDataURL(file);
+    });
+
+    prevBtn.addEventListener("click", () => {
+        if (currentIndex > 0) {
+            currentIndex--;
+            displayPhoto(currentIndex);
+        }
+    });
+
+    nextBtn.addEventListener("click", () => {
+        if (currentIndex < photos.length - 1) {
+            currentIndex++;
+            displayPhoto(currentIndex);
+        }
+    });
+
+    stars.forEach(star => {
+        star.addEventListener("click", () => {
+            if (!photos.length) return;
+            const rating = parseInt(star.getAttribute("data-value"));
+            photos[currentIndex].ratings.push(rating);
+            localStorage.setItem("photoFeed", JSON.stringify(photos));
+            updateStars(photos[currentIndex].ratings);
+        });
+    });
+
+    addComment.addEventListener("click", () => {
+        const comment = commentInput.value.trim();
+        if (comment && photos.length) {
+            photos[currentIndex].comments.push(comment);
+            localStorage.setItem("photoFeed", JSON.stringify(photos));
+            commentInput.value = "";
+            displayComments(photos[currentIndex].comments);
+        }
+    });
+
+    deleteBtn.addEventListener("click", () => {
+        if (!photos.length) return;
+        if (confirm("Are you sure you want to delete this photo?")) {
+            photos.splice(currentIndex, 1);
+            if (currentIndex >= photos.length) currentIndex = photos.length - 1;
+            localStorage.setItem("photoFeed", JSON.stringify(photos));
+            displayPhoto(currentIndex);
+        }
+    });
+
+    displayPhoto(currentIndex);
+</script>
+
+</body>
+</html>
